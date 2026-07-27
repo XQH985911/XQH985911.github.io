@@ -9,112 +9,11 @@
   <meta name="author" content="Qihang Xu">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Self-contained styles (same theme as stylesheet.css) so this page works at any path depth -->
+  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+
   <style>
-    /* ===== Light Theme (default) ===== */
-    :root {
-      --bg-color: #f0f0f0;
-      --card-bg: #ffffff;
-      --text-color: #3a3a3a;
-      --heading-color: #1a1a1a;
-      --link-color: #4d4d4d;
-      --link-hover-color: #000000;
-      --border-color: #d5d5d5;
-      --shadow-color: rgba(0, 0, 0, 0.08);
-    }
-
-    /* ===== Manual Dark Theme (user toggle) ===== */
-    :root[data-theme="dark"] {
-      --bg-color: #181818;
-      --card-bg: #242424;
-      --text-color: #d6d6d6;
-      --heading-color: #f2f2f2;
-      --link-color: #8ab4f8;
-      --link-hover-color: #b8d4ff;
-      --border-color: #3d3d3d;
-      --shadow-color: rgba(0, 0, 0, 0.4);
-    }
-
-    /* ===== System Dark Theme (fallback when no manual choice) ===== */
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme]) {
-        --bg-color: #181818;
-        --card-bg: #242424;
-        --text-color: #d6d6d6;
-        --heading-color: #f2f2f2;
-        --link-color: #8ab4f8;
-        --link-hover-color: #b8d4ff;
-        --border-color: #3d3d3d;
-        --shadow-color: rgba(0, 0, 0, 0.4);
-      }
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: 'Lato', Verdana, Helvetica, sans-serif;
-      font-size: 14px;
-    }
-
-    .section {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      box-shadow: 0 1px 4px var(--shadow-color);
-      margin-top: 16px;
-      margin-bottom: 16px;
-      transition: box-shadow 0.25s ease;
-    }
-
-    .section:hover {
-      box-shadow: 0 4px 12px var(--shadow-color);
-    }
-
     name {
-      font-family: 'Lato', Verdana, Helvetica, sans-serif;
       font-size: 72px;
-      color: var(--heading-color);
-    }
-
-    a {
-      color: var(--link-color);
-      text-decoration: none;
-    }
-
-    a:focus,
-    a:hover {
-      color: var(--link-hover-color);
-      text-decoration: none;
-    }
-
-    #theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: 2px solid var(--border-color, #d0d0d0);
-      background: var(--bg-color, #ffffff);
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      line-height: 1;
-      transition: background 0.3s, border-color 0.3s, transform 0.2s;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    #theme-toggle:hover {
-      transform: scale(1.1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
-
-    #theme-toggle:active {
-      transform: scale(0.95);
     }
   </style>
 
