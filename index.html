@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <title>Qihang Xu</title>
+
+  <meta name="author" content="Qihang Xu">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+</head>
+
+<body>
+  <!-- Dark Mode Toggle -->
+  <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+
+  <table
+    style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+    <tbody>
+      <tr style="padding:0px">
+        <td style="padding:0px">
+          <!-- ====== Header ====== -->
+          <table class="section"
+            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+            <tbody>
+              <tr style="padding:0px">
+                <td style="padding:2.5%;width:63%;vertical-align:middle">
+                  <p style="text-align:center">
+                    <name>Qihang Xu</name>
+                  </p>
+                  <p>I am a student from Chengdu No.7 High School.
+                  </p>
+                  <p style="text-align:center">
+                    <a href="https://github.com/XQH985911/">Github</a>
+                    <br>
+                    Email: <a href="mailto:xqh985911@yeah.net">xqh985911@yeah.net</a>
+                  </p>
+                </td>
+                <td style="padding:2.5%;width:40%;max-width:40%">
+                  <img style="width:100%;max-width:100%" alt="profile photo"
+                      src="images/userphoto.PNG" class="hoverZoomLink">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- ====== News ====== -->
+          <table class="section"
+            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+            <tbody>
+              <tr>
+                <td style="padding:20px;width:100%;vertical-align:middle">
+                  <heading>News</heading>
+                  <p>
+                  <strong>[2025.09]</strong>&nbsp;&nbsp;&nbsp;&nbsp;Become a student of Chengdu No.7 High School.
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- ====== Education Heading ====== -->
+          <table class="section" width="100%" align="center" border="0" cellspacing="0" cellpadding="20">
+            <tbody>
+              <tr>
+                <td>
+                  <heading>Education</heading>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- ====== Education Content ====== -->
+          <table class="section" width="100%" align="center" border="0" cellpadding="20">
+            <tbody>
+              <tr>
+                <td style="padding:20px;width:25%;vertical-align:middle"><img src="images/CDQZ-logo.jpeg" width="80"></td>
+                <td width="75%" valign="center">
+                  Chengdu No.7 High School
+                  <br>
+                  Sep. 2025 - Jun. 2028
+                  <br>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- ====== Study ====== -->
+          <table class="section" style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+            <tbody>
+              <tr>
+                <td style="padding:20px;width:100%;vertical-align:middle">
+                  <heading>Study</heading>
+                  <p><subheading>&bull; Selected Subjects</subheading></p>
+                  <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Physics &nbsp;|&nbsp; Chemistry &nbsp;|&nbsp; Biology <br>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- ====== ClustrMaps ====== -->
+          <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=aMVHFEovT1gn6oVMvrp2ObQJiBrdVwX3nwGXqquyIoQ&w=300&h=200"></script>
+
+          <!-- ====== Footer ====== -->
+          <table
+            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+            <tbody>
+              <tr>
+                <td style="padding:0px">
+                  <br>
+                  <p style="text-align:right;font-size:small;">
+                    Template from <a href="https://github.com/jonbarron_website">JonBarron</a>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    (function() {
+      const html = document.documentElement;
+      const toggleBtn = document.getElementById('theme-toggle');
+
+      // Apply saved theme (only if user has manually chosen before)
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        html.setAttribute('data-theme', saved);
+      }
+      // If no saved theme, don't set attribute → CSS @media handles system preference
+
+      // Get effective theme (manual > system)
+      function getEffectiveTheme() {
+        if (html.hasAttribute('data-theme')) {
+          return html.getAttribute('data-theme');
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function updateIcon() {
+        toggleBtn.textContent = getEffectiveTheme() === 'dark' ? '☀️' : '🌙';
+      }
+      updateIcon();
+
+      // Toggle on click
+      toggleBtn.addEventListener('click', function() {
+        const next = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateIcon();
+      });
+    })();
+  </script>
+</body>
+
+</html>
