@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================
+       Light Theme (default) — Minimalist Gray
+       ========================================== */
+    :root {
+      --bg: #f0f0f0;
+      --card-bg: #ffffff;
+      --text: #3a3a3a;
+      --text-dim: #888888;
+      --heading: #1a1a1a;
+      --border: #d5d5d5;
+      --shadow: rgba(0, 0, 0, 0.08);
+      --cell-bg: #fafafa;
+      --cell-border: #e0e0e0;
+      --cell-hover-bg: #eeeeee;
+      --cell-hover-border: #bbbbbb;
+      --mark-color: #1a1a1a;
+      --win-bg: #e8e8e8;
+      --win-border: #666666;
+      --draw-bg: #f5f5f5;
+      --btn-bg: #f0f0f0;
+      --btn-hover: #e4e4e4;
+      --btn-border: #d0d0d0;
+      --btn-new-bg: #1a1a1a;
+      --btn-new-text: #ffffff;
+      --mode-active-bg: #e0e0e0;
+      --mode-active-text: #1a1a1a;
+      --turn-bg: #f5f5f5;
+      --score-border: #e8e8e8;
+      --highlight-border: #999999;
+      --banner-win-bg: #e8e8e8;
+      --banner-draw-bg: #f5f5f5;
+    }
+
+    /* ==========================================
+       Dark Theme (manual toggle)
+       ========================================== */
+    :root[data-theme="dark"] {
+      --bg: #181818;
+      --card-bg: #242424;
+      --text: #d6d6d6;
+      --text-dim: #999999;
+      --heading: #f2f2f2;
+      --border: #3d3d3d;
+      --shadow: rgba(0, 0, 0, 0.4);
+      --cell-bg: #2e2e2e;
+      --cell-border: #3d3d3d;
+      --cell-hover-bg: #383838;
+      --cell-hover-border: #555555;
+      --mark-color: #e8e8e8;
+      --win-bg: #333333;
+      --win-border: #777777;
+      --draw-bg: #2a2a2a;
+      --btn-bg: #2e2e2e;
+      --btn-hover: #383838;
+      --btn-border: #3d3d3d;
+      --btn-new-bg: #e8e8e8;
+      --btn-new-text: #1a1a1a;
+      --mode-active-bg: #383838;
+      --mode-active-text: #f2f2f2;
+      --turn-bg: #2e2e2e;
+      --score-border: #3d3d3d;
+      --highlight-border: #666666;
+      --banner-win-bg: #333333;
+      --banner-draw-bg: #2a2a2a;
+    }
+
+    /* ==========================================
+       System Dark Theme (follow system when no manual selection)
+       ========================================== */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --bg: #181818;
+        --card-bg: #242424;
+        --text: #d6d6d6;
+        --text-dim: #999999;
+        --heading: #f2f2f2;
+        --border: #3d3d3d;
+        --shadow: rgba(0, 0, 0, 0.4);
+        --cell-bg: #2e2e2e;
+        --cell-border: #3d3d3d;
+        --cell-hover-bg: #383838;
+        --cell-hover-border: #555555;
+        --mark-color: #e8e8e8;
+        --win-bg: #333333;
+        --win-border: #777777;
+        --draw-bg: #2a2a2a;
+        --btn-bg: #2e2e2e;
+        --btn-hover: #383838;
+        --btn-border: #3d3d3d;
+        --btn-new-bg: #e8e8e8;
+        --btn-new-text: #1a1a1a;
+        --mode-active-bg: #383838;
+        --mode-active-text: #f2f2f2;
+        --turn-bg: #2e2e2e;
+        --score-border: #3d3d3d;
+        --highlight-border: #666666;
+        --banner-win-bg: #333333;
+        --banner-draw-bg: #2a2a2a;
+      }
+    }
+
+    /* ========== Global ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ==========================================
+       Theme Toggle Button (matching homepage style)
+       ========================================== */
+    #theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+      transition: background 0.3s, border-color 0.3s, transform 0.2s, color 0.3s;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    #theme-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 14px var(--shadow);
+    }
+
+    #theme-toggle:active {
+      transform: scale(0.95);
+    }
+
+    /* ========== Main Container ========== */
+    .container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 36px 34px 30px;
+      width: min(92vw, 420px);
+      box-shadow: 0 1px 4px var(--shadow);
+      animation: fadeInUp 0.4s ease;
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.25s;
+    }
+
+    .container:hover {
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== Header ========== */
+    .header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--heading);
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+      transition: color 0.3s;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+      transition: color 0.3s;
+    }
+
+    /* ========== Mode Switch ========== */
+    .mode-switch {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+
+    .mode-btn:hover {
+      background: var(--btn-hover);
+      color: var(--text);
+    }
+
+    .mode-btn.active {
+      background: var(--mode-active-bg);
+      border-color: var(--highlight-border);
+      color: var(--mode-active-text);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    /* ========== Turn Order (only in PvE mode) ========== */
+    .order-switch {
+      display: none;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .order-switch.visible {
+      display: flex;
+    }
+
+    .order-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+
+    .order-btn:hover {
+      background: var(--btn-hover);
+      color: var(--text);
+    }
+
+    .order-btn.active {
+      background: var(--mode-active-bg);
+      border-color: var(--highlight-border);
+      color: var(--mode-active-text);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    /* ========== Player Indicator ========== */
+    .turn-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 22px;
+      padding: 10px 18px;
+      background: var(--turn-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .turn-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--mark-color);
+      flex-shrink: 0;
+      transition: background 0.3s, opacity 0.3s ease;
+    }
+
+    .turn-dot.ai-thinking-dot {
+      animation: dotBreath 0.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes dotBreath {
+      from { opacity: 0.4; transform: scale(0.9); }
+      to   { opacity: 1;   transform: scale(1.15); }
+    }
+
+    .turn-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--text);
+      transition: color 0.3s;
+    }
+
+    .turn-text .player-name {
+      font-weight: 700;
+      color: var(--heading);
+      transition: color 0.3s;
+    }
+
+    /* ========== Result Banner ========== */
+    .result-banner {
+      text-align: center;
+      margin-bottom: 18px;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: all 0.3s ease;
+    }
+
+    .result-banner.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-banner.win {
+      background: var(--banner-win-bg);
+      color: var(--heading);
+      border: 1px solid var(--win-border);
+    }
+
+    .result-banner.draw {
+      background: var(--banner-draw-bg);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+
+    /* ========== Board ========== */
+    .board-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 5px;
+      width: min(75vw, 290px);
+      height: min(75vw, 290px);
+    }
+
+    .cell {
+      position: relative;
+      background: var(--cell-bg);
+      border: 2px solid var(--cell-border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cell:not(.taken):hover {
+      border-color: var(--cell-hover-border);
+      background: var(--cell-hover-bg);
+      transform: scale(1.03);
+    }
+
+    .board.ai-thinking .cell:not(.taken) {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .cell.taken {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .cell.winner {
+      border-color: var(--win-border);
+      background: var(--win-bg);
+      z-index: 1;
+    }
+
+    .cell.draw-cell {
+      border-color: var(--border);
+      background: var(--draw-bg);
+    }
+
+    /* ========== X Mark ========== */
+    .cell.x-mark::before,
+    .cell.x-mark::after {
+      content: '';
+      position: absolute;
+      width: 55%;
+      height: 3px;
+      background: var(--mark-color);
+      border-radius: 1px;
+      animation: markAppear 0.22s ease;
+      transition: background 0.3s;
+    }
+
+    .cell.x-mark::before { transform: rotate(45deg); }
+    .cell.x-mark::after  { transform: rotate(-45deg); }
+
+    /* ========== O Mark ========== */
+    .cell.o-mark::after {
+      content: '';
+      position: absolute;
+      width: 48%;
+      height: 48%;
+      border: 3px solid var(--mark-color);
+      border-radius: 50%;
+      animation: oMarkAppear 0.22s ease;
+      transform: none;
+      transition: border-color 0.3s;
+    }
+
+    @keyframes markAppear {
+      from { opacity: 0; transform: scale(0.3); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes oMarkAppear {
+      from { opacity: 0; transform: scale(0.3); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* ========== Scoreboard ========== */
+    .scoreboard {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .score-card {
+      flex: 1;
+      text-align: center;
+      padding: 12px 6px;
+      border-radius: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--score-border);
+      transition: all 0.3s ease;
+    }
+
+    .score-card .score-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+      transition: color 0.3s;
+    }
+
+    .score-card .score-value {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--heading);
+      letter-spacing: 0.02em;
+      transition: all 0.3s ease;
+    }
+
+    .score-card.highlight {
+      border-color: var(--highlight-border);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* ========== Controls ========== */
+    .controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--btn-border);
+      border-radius: 8px;
+      background: var(--btn-bg);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn:hover {
+      background: var(--btn-hover);
+      border-color: var(--cell-hover-border);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-new-game {
+      background: var(--btn-new-bg);
+      color: var(--btn-new-text);
+      border-color: var(--btn-new-bg);
+    }
+
+    .btn-new-game:hover {
+      opacity: 0.85;
+    }
+
+    /* ========== Footer Link ========== */
+    .footer-link {
+      text-align: center;
+      margin-top: 18px;
+    }
+
+    .footer-link a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.78rem;
+      transition: color 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    .footer-link a:hover {
+      color: var(--text);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 400px) {
+      .container { padding: 26px 18px 22px; }
+      .title { font-size: 1.45rem; }
+      .board { width: min(80vw, 260px); height: min(80vw, 260px); gap: 4px; }
+      .cell { border-radius: 8px; }
+      .score-card .score-value { font-size: 1.4rem; }
+      .btn { padding: 9px 10px; font-size: 0.78rem; }
+      .mode-btn { font-size: 0.76rem; padding: 7px 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Theme Toggle Button -->
+  <button id="theme-toggle" title="Toggle light/dark mode">&#9789;</button>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="title">Tic-Tac-Toe</h1>
+      <p class="subtitle">Tic-Tac-Toe</p>
+      <!-- Mode Switch -->
+      <div class="mode-switch">
+        <button class="mode-btn active" id="btnPvP" data-mode="pvp">Two Players</button>
+        <button class="mode-btn" id="btnPvE" data-mode="pve">vs AI</button>
+      </div>
+
+      <!-- Order switch (only in PvE mode) -->
+      <div class="order-switch" id="orderSwitch">
+        <button class="order-btn active" id="btnYouFirst">You First (X)</button>
+        <button class="order-btn" id="btnAiFirst">AI First (X)</button>
+      </div>
+    </div>
+
+    <!-- Game Result Banner -->
+    <div class="result-banner" id="resultBanner"></div>
+
+    <!-- Current Player Indicator -->
+    <div class="turn-indicator" id="turnIndicator">
+      <span class="turn-dot" id="turnDot"></span>
+      <span class="turn-text">
+        <span class="player-name" id="turnName">X</span>'s Turn
+      </span>
+    </div>
+
+    <!-- Board -->
+    <div class="board-wrapper">
+      <div class="board" id="board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard">
+      <div class="score-card" id="scoreX">
+        <div class="score-label" id="scoreXLabel">X Wins</div>
+        <div class="score-value" id="scoreXVal">0</div>
+      </div>
+      <div class="score-card" id="scoreDraw">
+        <div class="score-label" id="scoreDrawLabel">Draw</div>
+        <div class="score-value" id="scoreDrawVal">0</div>
+      </div>
+      <div class="score-card" id="scoreO">
+        <div class="score-label" id="scoreOLabel">O Wins</div>
+        <div class="score-value" id="scoreOVal">0</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn" id="btnRestart">Play Again</button>
+      <button class="btn btn-new-game" id="btnNewGame">New Game</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-link">
+      <a href="../index.html">&larr; Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================
+       Tic-Tac-Toe Game Logic
+       ========================================== */
+
+    // ---------- DOM Elements ----------
+    const boardEl       = document.getElementById('board');
+    const cells         = document.querySelectorAll('.cell');
+    const turnDot       = document.getElementById('turnDot');
+    const turnName      = document.getElementById('turnName');
+    const turnIndicator = document.getElementById('turnIndicator');
+    const resultBanner  = document.getElementById('resultBanner');
+    const scoreXVal     = document.getElementById('scoreXVal');
+    const scoreOVal     = document.getElementById('scoreOVal');
+    const scoreDrawVal  = document.getElementById('scoreDrawVal');
+    const scoreX        = document.getElementById('scoreX');
+    const scoreO        = document.getElementById('scoreO');
+    const scoreDraw     = document.getElementById('scoreDraw');
+    const scoreXLabel   = document.getElementById('scoreXLabel');
+    const scoreOLabel   = document.getElementById('scoreOLabel');
+    const btnRestart    = document.getElementById('btnRestart');
+    const btnNewGame    = document.getElementById('btnNewGame');
+    const btnPvP        = document.getElementById('btnPvP');
+    const btnPvE        = document.getElementById('btnPvE');
+    const orderSwitch   = document.getElementById('orderSwitch');
+    const btnYouFirst   = document.getElementById('btnYouFirst');
+    const btnAiFirst    = document.getElementById('btnAiFirst');
+    const themeToggle   = document.getElementById('theme-toggle');
+
+    // ---------- Game State ----------
+    const WIN_LINES = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+
+    let boardState;
+    let currentPlayer;
+    let gameActive;
+    let gameMode;
+    let scores;
+    let aiTimer;
+
+    let humanColor = 'X';   // player mark: 'X'=first, 'O'=second
+    function getAiColor() { return humanColor === 'X' ? 'O' : 'X'; }
+
+    // ======================================================
+    //  Theme Toggle Logic
+    // ======================================================
+
+    function getTheme() {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.innerHTML = '&#9788;'; // sun: switch to light
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        themeToggle.innerHTML = '&#9789;'; // moon: switch to dark
+      }
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.hasAttribute('data-theme') ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      localStorage.setItem('theme', next);
+    }
+
+    // Initialize theme
+    applyTheme(getTheme());
+
+    // Listen for system theme changes (only follow when user hasn't manually set)
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // ======================================================
+    //  Game Initialization
+    // ======================================================
+
+    function initGame(resetScores = false) {
+      if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
+
+      boardState    = Array(9).fill(null);
+      currentPlayer = 'X';
+      gameActive    = true;
+
+      if (resetScores) {
+        scores = { X: 0, O: 0, draw: 0 };
+      } else if (!scores) {
+        scores = { X: 0, O: 0, draw: 0 };
+      }
+
+      cells.forEach(cell => { cell.className = 'cell'; });
+
+      resultBanner.className = 'result-banner';
+      resultBanner.textContent = '';
+      boardEl.classList.remove('ai-thinking');
+
+      updateScoreLabels();
+      updateTurnUI();
+      updateScoreUI();
+      clearScoreHighlight();
+
+      // In PvE mode and player goes second → AI (X) moves first
+      if (gameMode === 'pve' && humanColor === 'O' && gameActive) {
+        boardEl.classList.add('ai-thinking');
+        updateTurnUI();
+        aiTimer = setTimeout(() => { aiTimer = null; aiMove(); }, 400);
+      }
+    }
+
+    function updateScoreLabels() {
+      if (gameMode === 'pve') {
+        scoreXLabel.textContent = (humanColor === 'X') ? 'You (X)' : 'AI (X)';
+        scoreOLabel.textContent = (humanColor === 'O') ? 'You (O)' : 'AI (O)';
+      } else {
+        scoreXLabel.textContent = 'X Wins';
+        scoreOLabel.textContent = 'O Wins';
+      }
+    }
+
+    function updateTurnUI() {
+      if (!gameActive) return;
+
+      turnDot.classList.remove('ai-thinking-dot');
+
+      if (currentPlayer === 'X') {
+        if (gameMode === 'pve') {
+          turnName.textContent = (humanColor === 'X') ? 'You (X)' : 'AI (X)';
+          if (humanColor !== 'X') turnDot.classList.add('ai-thinking-dot');
+        } else {
+          turnName.textContent = 'X';
+        }
+      } else {
+        if (gameMode === 'pve') {
+          turnName.textContent = (humanColor === 'O') ? 'You (O)' : 'AI (O)';
+          if (humanColor !== 'O') turnDot.classList.add('ai-thinking-dot');
+        } else {
+          turnName.textContent = 'O';
+        }
+      }
+
+      turnIndicator.style.opacity = '1';
+    }
+
+    function updateScoreUI() {
+      scoreXVal.textContent    = scores.X;
+      scoreOVal.textContent    = scores.O;
+      scoreDrawVal.textContent = scores.draw;
+    }
+
+    function highlightScoreCard(type) {
+      clearScoreHighlight();
+      if (type === 'X')    scoreX.classList.add('highlight');
+      if (type === 'O')    scoreO.classList.add('highlight');
+      if (type === 'draw') scoreDraw.classList.add('highlight');
+    }
+
+    function clearScoreHighlight() {
+      scoreX.classList.remove('highlight');
+      scoreO.classList.remove('highlight');
+      scoreDraw.classList.remove('highlight');
+    }
+
+    function checkWinner(board = boardState) {
+      for (const [a, b, c] of WIN_LINES) {
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return { winner: board[a], cells: [a, b, c] };
+        }
+      }
+      if (board.every(cell => cell !== null)) {
+        return { winner: 'draw', cells: [] };
+      }
+      return null;
+    }
+
+    function endGame(result) {
+      gameActive = false;
+
+      if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
+
+      boardEl.classList.remove('ai-thinking');
+      turnDot.classList.remove('ai-thinking-dot');
+
+      if (result.winner === 'draw') {
+        scores.draw++;
+        resultBanner.className = 'result-banner draw show';
+        resultBanner.textContent = 'Draw -- Well played!';
+        highlightScoreCard('draw');
+        cells.forEach(cell => cell.classList.add('draw-cell'));
+      } else {
+        const winner = result.winner;
+        scores[winner]++;
+
+        resultBanner.className = 'result-banner win show';
+
+        if (gameMode === 'pve') {
+          resultBanner.textContent = (winner === humanColor)
+            ? 'You Win!'
+            : 'AI Wins';
+        } else {
+          resultBanner.textContent = winner + ' Wins';
+        }
+
+        highlightScoreCard(winner);
+        result.cells.forEach(index => {
+          cells[index].classList.add('winner');
+        });
+      }
+
+      updateScoreUI();
+      turnIndicator.style.opacity = '0.35';
+    }
+
+    function placeMark(index, player) {
+      boardState[index] = player;
+      cells[index].classList.add('taken');
+      cells[index].classList.add(player === 'X' ? 'x-mark' : 'o-mark');
+    }
+
+    function afterPlayerMove() {
+      const result = checkWinner();
+      if (result) {
+        endGame(result);
+        return;
+      }
+
+      if (gameMode === 'pvp') {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        updateTurnUI();
+      } else {
+        // PvE: after player's move, it's AI's turn
+        currentPlayer = getAiColor();
+        updateTurnUI();
+        boardEl.classList.add('ai-thinking');
+
+        aiTimer = setTimeout(() => {
+          aiTimer = null;
+          aiMove();
+        }, 350);
+      }
+    }
+
+    // ======================================================
+    //  AI (Minimax)
+    // ======================================================
+
+    function aiMove() {
+      const aiColor = getAiColor();
+      if (!gameActive || currentPlayer !== aiColor) return;
+
+      const bestMove = getBestMove();
+      if (bestMove === -1) return;
+
+      placeMark(bestMove, aiColor);
+
+      const result = checkWinner();
+      if (result) {
+        endGame(result);
+      } else {
+        currentPlayer = humanColor;
+        boardEl.classList.remove('ai-thinking');
+        updateTurnUI();
+      }
+    }
+
+    function getBestMove() {
+      const aiColor = getAiColor();
+      let bestScore = -Infinity;
+      let bestMoves = [];
+
+      for (let i = 0; i < 9; i++) {
+        if (boardState[i] === null) {
+          boardState[i] = aiColor;
+          const score = minimax(boardState, 0, false);
+          boardState[i] = null;
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMoves = [i];
+          } else if (score === bestScore) {
+            bestMoves.push(i);
+          }
+        }
+      }
+
+      return bestMoves.length > 0
+        ? bestMoves[Math.floor(Math.random() * bestMoves.length)]
+        : -1;
+    }
+
+    function minimax(board, depth, isMaximizing) {
+      const result = checkWinner(board);
+      const aiColor = getAiColor();
+
+      if (result) {
+        if (result.winner === aiColor)      return 10 - depth;
+        if (result.winner === humanColor)    return depth - 10;
+        if (result.winner === 'draw') return 0;
+      }
+
+      if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === null) {
+            board[i] = aiColor;
+            const score = minimax(board, depth + 1, false);
+            board[i] = null;
+            bestScore = Math.max(score, bestScore);
+          }
+        }
+        return bestScore;
+      } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === null) {
+            board[i] = humanColor;
+            const score = minimax(board, depth + 1, true);
+            board[i] = null;
+            bestScore = Math.min(score, bestScore);
+          }
+        }
+        return bestScore;
+      }
+    }
+
+    // ---------- Cell Click ----------
+    function handleCellClick(e) {
+      const index = parseInt(e.currentTarget.dataset.index);
+
+      if (!gameActive || boardState[index] !== null) return;
+      if (gameMode === 'pve' && currentPlayer !== humanColor) return;
+
+      placeMark(index, currentPlayer);
+      afterPlayerMove();
+    }
+
+    function restartGame() {
+      if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
+
+      boardState    = Array(9).fill(null);
+      currentPlayer = 'X';
+      gameActive    = true;
+
+      cells.forEach(cell => { cell.className = 'cell'; });
+
+      resultBanner.className = 'result-banner';
+      resultBanner.textContent = '';
+      boardEl.classList.remove('ai-thinking');
+
+      clearScoreHighlight();
+      updateTurnUI();
+
+      // In PvE mode and player goes second → AI moves first
+      if (gameMode === 'pve' && humanColor === 'O' && gameActive) {
+        boardEl.classList.add('ai-thinking');
+        updateTurnUI();
+        aiTimer = setTimeout(() => { aiTimer = null; aiMove(); }, 400);
+      }
+    }
+
+    function newGame() {
+      scores = { X: 0, O: 0, draw: 0 };
+      updateScoreUI();
+      restartGame();
+    }
+
+    function switchMode(mode) {
+      if (gameMode === mode) return;
+
+      gameMode = mode;
+
+      btnPvP.classList.toggle('active', mode === 'pvp');
+      btnPvE.classList.toggle('active', mode === 'pve');
+      orderSwitch.classList.toggle('visible', mode === 'pve');
+
+      document.querySelector('.subtitle').textContent = mode === 'pvp'
+        ? 'Tic-Tac-Toe / PvP'
+        : 'Tic-Tac-Toe / vs AI';
+
+      // Reset to player first when switching modes
+      humanColor = 'X';
+      btnYouFirst.classList.add('active');
+      btnAiFirst.classList.remove('active');
+      newGame();
+    }
+
+    function setOrder(youFirst) {
+      const newColor = youFirst ? 'X' : 'O';
+      if (humanColor === newColor) return;
+      humanColor = newColor;
+      btnYouFirst.classList.toggle('active', youFirst);
+      btnAiFirst.classList.toggle('active', !youFirst);
+      newGame();
+    }
+
+    // ---------- Event Binding ----------
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    btnRestart.addEventListener('click', restartGame);
+    btnNewGame.addEventListener('click', newGame);
+    btnPvP.addEventListener('click', () => switchMode('pvp'));
+    btnPvE.addEventListener('click', () => switchMode('pve'));
+    btnYouFirst.addEventListener('click', () => setOrder(true));
+    btnAiFirst.addEventListener('click', () => setOrder(false));
+
+    // ---------- Launch ----------
+    gameMode = 'pvp';
+    initGame(true);
+  </script>
+
+</body>
+</html>
